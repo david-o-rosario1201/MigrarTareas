@@ -1,5 +1,95 @@
-﻿<h3>Index</h3>
+﻿@page "/Prioridades"
+@inject NavigationManager navigation
+@inject HttpClient httpClient
+
+<PageTitle>Prioridades</PageTitle>
+<div class="container">
+	<div class="card shadow-lg">
+		@*Header*@
+		<div class="card-header">
+			<h3><strong>Prioridades</strong></h3>
+			<button type="button" class="btn btn-outline-primary" @onclick="IrACrear"><i class="bi bi-plus-circle" /> Crear</button>
+		</div>
+		@*Body*@
+		<div class="card-body">
+			@if (loading)
+			{
+				<div class="d-flex justify-content-center">
+					<div class="spinner-border text-info">
+					</div>
+				</div>
+			}
+			else if (prioridades.Count == 0)
+			{
+				<h1 class="miMensaje"><i class="bi bi-exclamation-triangle" /> No hay prioridades creadas</h1>
+			}
+			else
+			{
+				<table class="table table-bordered miTabla">
+					<thead>
+						<tr>
+							<th>PrioridadId</th>
+							<th>Descripci&oacute;n</th>
+							<th>D&iacute;asCompromiso</th>
+							<th>Ver</th>
+							<th>Editar</th>
+							<th>Eliminar</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var prioridad in prioridades)
+						{
+							<tr>
+								<td>@prioridad.PrioridadId</td>
+								<td>@prioridad.Descripcion</td>
+								<td>@prioridad.DiasCompromiso</td>
+								<td><button type="button" class="btn btn-outline-info" @onclick="()=> IrADetalles(prioridad.PrioridadId)"><i class="bi bi-eye" /></button></td>
+								<td><button type="button" class="btn btn-outline-warning" @onclick="()=> IrAEditar(prioridad.PrioridadId)"><i class="bi bi-pencil-square" /></button></td>
+								<td><button type="button" class="btn btn-outline-danger" @onclick="()=> IrAEliminar(prioridad.PrioridadId)"><i class="bi bi-trash3-fill" /></button></td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			}
+		</div>
+		@*Footer*@
+		<div class="card-footer">
+			<p><strong>Total de Prioridades:</strong> @prioridades.Count</p>
+		</div>
+	</div>
+</div>
 
 @code {
+	public List<Prioridades> prioridades = new List<Prioridades>();
+	public bool loading { get; set; } = true;
 
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+
+		prioridades = await httpClient.GetFromJsonAsync<List<Prioridades>>("api/Prioridades");
+
+		loading = false;
+
+		if (prioridades.Count == 0)
+			StateHasChanged();
+	}
+
+	void IrACrear()
+	{
+		navigation.NavigateTo("/CreatePrioridades");
+	}
+
+	void IrADetalles(int id)
+	{
+		navigation.NavigateTo($"/ViewPrioridades/prioridadId={id}");
+	}
+	void IrAEditar(int id)
+	{
+		navigation.NavigateTo($"/EditPrioridades/prioridadId={id}");
+	}
+	void IrAEliminar(int id)
+	{
+		navigation.NavigateTo($"/DeletePrioridades/prioridadId={id}");
+	}
 }
