@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MigrarTareas.Wasm", "MigrarTareas.Wasm\MigrarTareas.Wasm.csproj", "{6476C71E-D312-4B27-8297-874EC59E9BFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MigrarTareas.Wasm", "MigrarTareas.Wasm\MigrarTareas.Wasm.csproj", "{6476C71E-D312-4B27-8297-874EC59E9BFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MigrarTareas.Api", "MigrarTareas.Api\MigrarTareas.Api.csproj", "{2FFF7524-D66E-4C44-AA95-13CFF5173144}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MigrarTareas.Api", "MigrarTareas.Api\MigrarTareas.Api.csproj", "{2FFF7524-D66E-4C44-AA95-13CFF5173144}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library", "Library\Library.csproj", "{34C0523A-D8D7-4043-AAEF-9B9C297922D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library", "Library\Library.csproj", "{34C0523A-D8D7-4043-AAEF-9B9C297922D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
