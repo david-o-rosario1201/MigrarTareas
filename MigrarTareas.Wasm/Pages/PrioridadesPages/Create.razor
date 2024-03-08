@@ -1,5 +1,88 @@
-﻿<h3>Create</h3>
+﻿@page "/CreatePrioridades"
+@inject NavigationManager navigation
+@inject HttpClient httpClient
+
+<PageTitle>Crear Nueva Prioridad</PageTitle>
+<EditForm Model="prioridad" OnValidSubmit="Crear">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h3><strong>Crear Nueva Prioridad</strong></h3>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    @*ID*@
+                    <div class="col-4">
+                        <label class="form-label" for="prioridadId"><strong>ProridadId:</strong></label>
+                        <InputNumber id="prioridadId" class="form-control" @bind-Value="prioridad.PrioridadId"></InputNumber>
+                    </div>
+                    @*Descripción*@
+                    <div class="col-4">
+                        <label class="form-label" for="entradaDescripcion"><strong>Descripci&oacute;n:</strong></label>
+                        <InputText id="entradaDescripcion" class="form-control" placeholder="Escribe una descripci&oacute;n" @bind-Value="prioridad.Descripcion"></InputText>
+                        <ValidationMessage For="@(() => prioridad.Descripcion)" />
+                    </div>
+                    @*Días compromiso*@
+                    <div class="col-4">
+                        <label class="form-label" for="entradaDiasCompromiso"><strong>D&iacute;asCompromiso:</strong></label>
+                        <InputNumber id="entradaDiasCompromiso" class="form-control" @bind-Value="prioridad.DiasCompromiso"></InputNumber>
+                        <ValidationMessage For="@(() => prioridad.DiasCompromiso)" />
+                    </div>
+                </div>
+            </div>
+            @*Boton*@
+            <div class="card-footer d-flex justify-content-center">
+                <div class="px-2">
+                    <button type="button" class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left" /> Volver</button>
+                </div>
+                <button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy-fill" /> Crear</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+@*Mensaje*@
+@mensaje
 
 @code {
+    public Prioridades prioridad { get; set; } = new Prioridades();
+    public string mensaje { get; set; } = string.Empty;
 
+    public async Task Crear()
+    {
+        StateHasChanged();
+        if (!await Validar())
+            mensaje = "Error, ya existe una prioridad con esta descripción";
+        else
+        {
+            var response = await httpClient.PostAsJsonAsync("api/Prioridades", prioridad);
+            if (response.IsSuccessStatusCode)
+            {
+                mensaje = "Los datos se han creado con éxito";
+                StateHasChanged();
+                await Task.Delay(2000);
+                Volver();
+            }
+            else
+                mensaje = "Error, los datos no se han podido crear correctamente";
+        }
+
+        StateHasChanged();
+    }
+
+    public async Task<bool> Validar()
+    {
+        var prioridades = await httpClient.GetFromJsonAsync<List<Prioridades>>("api/Prioridades");
+        var descripcion = prioridades.Where(p => p.Descripcion == prioridad.Descripcion);
+
+        if (descripcion.Any())
+            return false;
+
+        return true;
+    }
+
+    void Volver()
+    {
+        navigation.NavigateTo("/Prioridades");
+    }
 }
