@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MigrarTareas.Wasm", "Migrar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MigrarTareas.Api", "MigrarTareas.Api\MigrarTareas.Api.csproj", "{2FFF7524-D66E-4C44-AA95-13CFF5173144}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library", "Library\Library.csproj", "{34C0523A-D8D7-4043-AAEF-9B9C297922D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{2FFF7524-D66E-4C44-AA95-13CFF5173144}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FFF7524-D66E-4C44-AA95-13CFF5173144}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FFF7524-D66E-4C44-AA95-13CFF5173144}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34C0523A-D8D7-4043-AAEF-9B9C297922D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34C0523A-D8D7-4043-AAEF-9B9C297922D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34C0523A-D8D7-4043-AAEF-9B9C297922D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34C0523A-D8D7-4043-AAEF-9B9C297922D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
