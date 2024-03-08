@@ -1,0 +1,6 @@
+@MigrarTareas.Api_HostAddress = http://localhost:5021
+
+GET {{MigrarTareas.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
