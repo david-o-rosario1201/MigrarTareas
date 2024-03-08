@@ -1,5 +1,46 @@
-﻿<h3>View</h3>
+﻿@page "/ViewPrioridades"
+@page "/ViewPrioridades/prioridadId={prioridadId:int}"
+@inject NavigationManager navigation
+@inject HttpClient httpClient
+
+<PageTitle>Detalle de Prioridad</PageTitle>
+<div class="cotainer">
+	<div class="card shadow-lg">
+		@*Header*@
+		<div class="card-header">
+			<h3><strong>Ver Prioridad</strong></h3>
+		</div>
+		@*Body*@
+
+		<div class="card-body">
+			@*Datos*@
+			<ul>
+				<li><strong>PrioridadId:</strong> @prioridad.PrioridadId</li>
+				<li><strong>Descripci&oacute;n:</strong> @prioridad.Descripcion</li>
+				<li><strong>D&iacute;asCompromiso:</strong> @prioridad.DiasCompromiso</li>
+			</ul>
+		</div>
+		@*Footer*@
+		<div class="card-footer">
+			<button type="button" class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left" /> Volver</button>
+		</div>
+	</div>
+</div>
 
 @code {
+	[Parameter]
+	public int prioridadId { get; set; }
+	public Prioridades prioridad { get; set; } = new Prioridades();
 
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+
+		prioridad = await httpClient.GetFromJsonAsync<Prioridades>($"api/Prioridades/{prioridadId}");
+	}
+
+	void Volver()
+	{
+		navigation.NavigateTo("/Prioridades");
+	}
 }
