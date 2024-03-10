@@ -284,6 +284,7 @@
 		var clienteList = await httpClient.GetFromJsonAsync<List<Clientes>>("api/Clientes");
 		var nombre = clienteList.Where(c => c.Nombre == cliente.Nombre);
 		var rnc = clienteList.Where(c => c.RNC == cliente.RNC);
+		var email = clienteList.Where(c => c.Email == cliente.Email);
 
 		if (nombre.Any())
 		{
@@ -294,6 +295,12 @@
 		if (rnc.Any())
 		{
 			mensaje = "Error, ya existe un cliente con este RNC";
+			StateHasChanged();
+			return false;
+		}
+		if (email.Any())
+		{
+			mensaje = "Error, ya existe un cliente con este email";
 			StateHasChanged();
 			return false;
 		}
