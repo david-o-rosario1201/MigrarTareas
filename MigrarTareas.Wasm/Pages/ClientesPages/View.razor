@@ -1,5 +1,109 @@
-﻿<h3>View</h3>
+﻿@page "/ViewClientes"
+@page "/ViewClientes/clienteId={clienteId:int}"
+@inject NavigationManager NavigationManager;
+@inject HttpClient httpClient
+
+<PageTitle>Detalles de Cliente</PageTitle>
+<div class="container">
+	<div class="card shadow-lg">
+		@*Header*@
+		<div class="card-header">
+			<h3><strong>Ver Cliente</strong></h3>
+		</div>
+		@*Body*@
+		<div class="card-body">
+			@*Datos*@
+			<ul>
+				<li><p><strong>ClienteId:</strong> @cliente.ClienteId</p></li>
+				<li><p><strong>Nombre:</strong> @cliente.Nombre</p></li>
+				<li><p><strong>RNC:</strong> @cliente.RNC</p></li>
+				<li><p><strong>Email:</strong> @cliente.Email</p></li>
+				<li><p><strong>Direcci&oacute;n:</strong> @cliente.Direccion</p></li>
+			</ul>
+		</div>
+
+
+		@*Detalles*@
+		<div class="card card-header">
+			<h3><strong>Detalles</strong></h3>
+		</div>
+
+		@*Celulares*@
+		<div class="card-body">
+			<section class="row mb-3">
+				<div class="col-6">
+					@if (cliente.ClientesDetalleCelulares.Count > 0)
+					{
+						<table class="table table-bordered miTabla">
+							<thead>
+								<tr>
+									<th>Celular</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var celulares in cliente.ClientesDetalleCelulares)
+								{
+									<tr>
+										<td>@celulares.Celular</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+
+						<p><strong>Cantidad de Celulares: </strong>@cliente.ClientesDetalleCelulares.Count</p>
+					}
+				</div>
+
+
+
+				<div class="col-6">
+					@if (cliente.ClientesDetalleTelefonos.Count > 0)
+					{
+						<table class="table table-bordered miTabla">
+							<thead>
+								<tr>
+									<th>Tel&eacute;fono</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var telefonos in cliente.ClientesDetalleTelefonos)
+								{
+									<tr>
+										<td>@telefonos.Telefono</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+
+						<p><strong>Cantidad de Tel&eacute;fonos: </strong>@cliente.ClientesDetalleTelefonos.Count</p>
+					}
+				</div>
+			</section>
+		</div>
+
+
+		@*Footer*@
+		<div class="card-footer">
+			<button type="button" class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"/> Volver</button>
+		</div>
+	</div>
+</div>
 
 @code {
+	[Parameter]
+	public int clienteId { get; set; }
+	public Clientes cliente { get; set; } = new Clientes();
+	public List<Clientes> clientesList = new List<Clientes>();
 
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+
+		cliente = await httpClient.GetFromJsonAsync<Clientes>($"api/Clientes/{clienteId}");
+	}
+
+	void Volver()
+	{
+		NavigationManager.NavigateTo("/Clientes");
+	}
 }
