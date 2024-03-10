@@ -59,31 +59,13 @@ namespace MigrarTareas.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutClientes(int id, Clientes clientes)
         {
-            if (id != clientes.ClienteId)
-            {
-                return BadRequest();
-            }
+            if(ClientesExists(clientes.ClienteId))
+			    _context.Clientes.Update(clientes);
 
-            _context.Entry(clientes).State = EntityState.Modified;
+			await _context.SaveChangesAsync();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ClientesExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
+			return Ok(clientes);
+		}
 
         // POST: api/Clientes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -116,7 +98,59 @@ namespace MigrarTareas.Api.Controllers
             return NoContent();
         }
 
-        private bool ClientesExists(int id)
+		[HttpDelete("{clienteId}/DetalleCelulares/{detalleId}")]
+		public async Task<IActionResult> DeleteClientesCelulares(int clienteId,int detalleId)
+		{
+			var clientes = await _context.Clientes
+                .Include(c => c.ClientesDetalleCelulares)
+                .FirstOrDefaultAsync(c => c.ClienteId == clienteId);
+
+			if (clientes == null)
+			{
+				return NotFound();
+			}
+
+            var detalles = clientes.ClientesDetalleCelulares.Where(d => d.Id == detalleId).FirstOrDefault();
+
+            if (detalles == null)
+            {
+                return NotFound();
+            }
+
+            clientes.ClientesDetalleCelulares.Remove(detalles);
+
+			await _context.SaveChangesAsync();
+
+			return NoContent();
+		}
+
+		[HttpDelete("{clienteId}/DetalleTelefonos/{detalleId}")]
+		public async Task<IActionResult> DeleteClientesTelefonos(int clienteId, int detalleId)
+		{
+			var clientes = await _context.Clientes
+                .Include(c => c.ClientesDetalleTelefonos)
+                .FirstOrDefaultAsync(c => c.ClienteId == clienteId);
+
+			if (clientes == null)
+			{
+				return NotFound();
+			}
+
+			var detalles = clientes.ClientesDetalleTelefonos.Where(d => d.Id == detalleId).FirstOrDefault();
+
+			if (detalles == null)
+			{
+				return NotFound();
+			}
+
+			clientes.ClientesDetalleTelefonos.Remove(detalles);
+
+			await _context.SaveChangesAsync();
+
+			return NoContent();
+		}
+
+		private bool ClientesExists(int id)
         {
             return _context.Clientes.Any(e => e.ClienteId == id);
         }
