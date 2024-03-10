@@ -1,5 +1,66 @@
-﻿<h3>Delete</h3>
+﻿@page "/DeleteSistemas"﻿
+@page "/DeleteSistemas/sistemaId={sistemaId:int}"
+@inject NavigationManager navigation
+@inject HttpClient httpClient
+
+<PageTitle>Eliminar Sistema</PageTitle>
+<div class="container">
+	<div class="card shadow-lg">
+		@*Header*@
+		<div class="card-header">
+			<h3><strong>Eliminar Sistema</strong></h3>
+		</div>
+		@*Body*@
+		<div class="card-body col-5">
+			<h4><strong>¿Est&aacute;s seguro de que quieres eliminar este sistema?</strong></h4>
+			@*Datos*@
+			<ul>
+				<li><p><strong>SistemaId:</strong> @sistema.SistemaId</p></li>
+				<li><p><strong>Nombre:</strong> @sistema.Nombre</p></li>
+			</ul>
+		</div>
+		<div class="card-footer d-flex justify-content-center">
+			<div class="px-2">
+				<button type="button" class="btn btn-outline-dark" @onclick="Volver"><i class="bi bi-box-arrow-left" /> Cancelar</button>
+			</div>
+			<button type="button" class="btn btn-outline-danger" @onclick="Eliminar"><i class="bi bi-trash3-fill" /> Eliminar</button>
+		</div>
+	</div>
+</div>
+@*Mensaje*@
+@mensaje
 
 @code {
+	[Parameter]
+	public int sistemaId { get; set; }
+	public Sistemas sistema { get; set; } = new Sistemas();
+	public string mensaje { get; set; } = string.Empty;
 
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+
+		sistema = await httpClient.GetFromJsonAsync<Sistemas>($"api/Sistemas/{sistemaId}");
+	}
+
+	public async Task Eliminar()
+	{
+		var response = await httpClient.DeleteAsync($"api/Sistemas/{sistemaId}");
+		if (response.IsSuccessStatusCode)
+		{
+			mensaje = "El sistema ha sido eliminado con éxito";
+			StateHasChanged();
+			await Task.Delay(2000);
+			Volver();
+		}
+		else
+			mensaje = "No se ha podido eliminar el sistema correctamente";
+
+		StateHasChanged();
+	}
+
+	void Volver()
+	{
+		navigation.NavigateTo("/Sistemas");
+	}
 }
