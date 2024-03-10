@@ -25,7 +25,10 @@ namespace MigrarTareas.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Clientes>>> GetClientes()
         {
-            return await _context.Clientes.ToListAsync();
+            return await _context.Clientes
+                .Include(c => c.ClientesDetalleCelulares)
+                .Include(t => t.ClientesDetalleTelefonos)
+                .ToListAsync();
         }
 
         // GET: api/Clientes/5
@@ -37,8 +40,10 @@ namespace MigrarTareas.Api.Controllers
                 return NotFound();
             }
 
-            var clientes = await _context.Clientes.
-                Where(c => c.ClienteId == id)
+            var clientes = await _context.Clientes
+                .Include(c => c.ClientesDetalleCelulares)
+				.Include(t => t.ClientesDetalleTelefonos)
+                .Where(c => c.ClienteId == id)
                 .FirstOrDefaultAsync();
 
             if(clientes == null)
