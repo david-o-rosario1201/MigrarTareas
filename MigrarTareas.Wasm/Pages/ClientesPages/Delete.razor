@@ -1,5 +1,125 @@
-﻿<h3>Delete</h3>
+﻿@page "/DeleteClientes"
+@page "/DeleteClientes/clienteId={clienteId:int}"
+@inject NavigationManager navigation
+@inject HttpClient httpClient
+
+<PageTitle>Eliminar Cliente</PageTitle>
+<div class="container">
+	<div class="card shadow-lg">
+		@*Header*@
+		<div class="card-header">
+			<h3><strong>Eliminar Cliente</strong></h3>
+		</div>
+		<div class="card-body col-5">
+			<h4><strong>¿Est&aacute;s seguro de que quieres eliminar a este cliente?</strong></h4>
+			@*Datos*@
+			<ul>
+				<li><p><strong>ClienteId:</strong> @cliente.ClienteId</p></li>
+				<li><p><strong>Nombre:</strong> @cliente.Nombre</p></li>
+				<li><p><strong>RNC:</strong> @cliente.RNC</p></li>
+				<li><p><strong>Email:</strong> @cliente.Email</p></li>
+				<li><p><strong>Direcci&oacute;n:</strong> @cliente.Direccion</p></li>
+			</ul>
+		</div>
+
+		@*Detalles*@
+		<div class="card card-header">
+			<h3><strong>Detalles</strong></h3>
+		</div>
+
+		@*Celulares*@
+		<div class="card-body">
+			<section class="row mb-3">
+				<div class="col-6">
+					@if (cliente.ClientesDetalleCelulares.Count > 0)
+					{
+						<table class="table table-bordered miTabla">
+							<thead>
+								<tr>
+									<th>Celular</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var celulares in cliente.ClientesDetalleCelulares)
+								{
+									<tr>
+										<td>@celulares.Celular</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+
+						<p><strong>Cantidad de Celulares: </strong>@cliente.ClientesDetalleCelulares.Count</p>
+					}
+				</div>
+
+
+
+				<div class="col-6">
+					@if (cliente.ClientesDetalleTelefonos.Count > 0)
+					{
+						<table class="table table-bordered miTabla">
+							<thead>
+								<tr>
+									<th>Tel&eacute;fono</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var telefonos in cliente.ClientesDetalleTelefonos)
+								{
+									<tr>
+										<td>@telefonos.Telefono</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+
+						<p><strong>Cantidad de Tel&eacute;fonos: </strong>@cliente.ClientesDetalleTelefonos.Count</p>
+					}
+				</div>
+			</section>
+		</div>
+
+
+		<div class="card-footer d-flex justify-content-center">
+			<div class="px-2">
+				<button type="button" class="btn btn-outline-dark" @onclick="Volver"><i class="bi bi-box-arrow-left"/> Cancelar</button>
+			</div>
+			<button type="button" class="btn btn-outline-danger" @onclick="Eliminar"><i class="bi bi-trash3-fill" />Eliminar</button>
+		</div>
+		@*Mensaje*@
+		@mensaje
+	</div>
+</div>
 
 @code {
+	[Parameter]
+	public int clienteId { get; set; }
+	public Clientes cliente { get; set; } = new Clientes();
+	public string mensaje { get; set; } = string.Empty;
 
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+
+		cliente = await httpClient.GetFromJsonAsync<Clientes>($"api/Clientes/{clienteId}");
+	}
+
+	public async Task Eliminar()
+	{
+		var response = await httpClient.DeleteAsync($"api/Clientes/{clienteId}");
+		if (response.IsSuccessStatusCode)
+		{
+			mensaje = "El cliente se ha eliminado con éxito";
+			await Task.Delay(2000);
+			Volver();
+		}
+		else
+			mensaje = "No se ha podido eliminar al cliente correctamente";
+	}
+
+	void Volver()
+	{
+		navigation.NavigateTo("/Clientes");
+	}
 }
