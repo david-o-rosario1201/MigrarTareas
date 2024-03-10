@@ -1,5 +1,209 @@
-﻿<h3>Index</h3>
+﻿@page "/Clientes"
+@inject NavigationManager navigation
+@inject HttpClient httpClient
+
+<PageTitle>Clientes</PageTitle>
+<div class="container">
+	<div class="card shadow-lg">
+		@*Header*@
+		<div class="card-header">
+			<h3><strong>Clientes</strong></h3>
+			<button type="button" class="btn btn-outline-primary" @onclick="IrACrear"><i class="bi bi-plus-circle" /> Crear</button>
+		</div>
+		@*Body*@
+		<div class="card-body">
+
+			@if (loading)
+			{
+				<div class="d-flex justify-content-center">
+					<div class="spinner-border text-info">
+					</div>
+				</div>
+			}
+			else if (clientes.Count == 0)
+			{
+				<h1 class="miMensaje"><i class="bi bi-exclamation-triangle" /> No hay clientes creados</h1>
+			}
+			else
+			{
+				@*Campos a Filtrar*@
+				<div class="mb-3">
+					<div class="row align-items-center">
+						<label class="form-label" for="filtro"><strong>Campo a Filtrar:</strong></label>
+						<div class="col-3">
+							<InputSelect id="filtro" class="form-select" @bind-Value="filtro">
+								<option>Elije una opci&oacute;n</option>
+								<option value="id">Id</option>
+								<option value="nombre">Nombre</option>
+								<option value="rnc">RNC</option>
+							</InputSelect>
+						</div>
+						<div class="col-auto miFlecha">
+							<p>→</p>
+						</div>
+						<div class="col-4">
+							<div class="input-group">
+								<InputText class="form-control" @bind-Value="valorFiltro" placeholder="Ingrese un dato para filtrar"></InputText>
+								<button type="button" class="btn btn-outline-primary" @onclick="Buscar"><i class="bi bi-search" /></button>
+							</div>
+						</div>
+						<div class="col-auto">
+							<button type="button" class="btn btn-outline-secondary" @onclick="Restablecer"><i class="bi bi-arrow-clockwise" /> Restablecer</button>
+						</div>
+					</div>
+				</div>
+
+				<table class="table table-bordered miTabla">
+					<thead>
+						<tr>
+							<th>ClienteId</th>
+							<th>Nombre</th>
+							@* <th>Tel&eacute;fono</th>
+							<th>Celular</th> *@
+							<th>RNC</th>
+							<th>Email</th>
+							<th>Direcci&oacute;n</th>
+							<th>Ver</th>
+							<th>Editar</th>
+							<th>Eliminar</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var cliente in clientes)
+						{
+							<tr>
+								<td>@cliente.ClienteId</td>
+								<td>@cliente.Nombre</td>
+								@* <td>@cliente.Telefono</td>
+								<td>@cliente.Celular</td> *@
+								<td>@cliente.RNC</td>
+								<td>@cliente.Email</td>
+								<td>@cliente.Direccion</td>
+								<td><button type="button" class="btn btn-outline-info" @onclick="()=> IrADetalles(cliente.ClienteId)"><i class="bi bi-eye" /></button></td>
+								<td><button type="button" class="btn btn-outline-warning" @onclick="()=> IrAEditar(cliente.ClienteId)"><i class="bi bi-pencil-square" /></button></td>
+								<td><button type="button" class="btn btn-outline-danger" @onclick="()=> IrAEliminar(cliente.ClienteId)"><i class="bi bi-trash3-fill" /></button></td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			}
+		</div>
+		<div class="mb-3"></div>
+		@*Footer*@
+		<div class="card-footer">
+			<p><strong>Total de Clientes:</strong> @clientes.Count</p>
+		</div>
+	</div>
+	<div class="card-footer d-flex justify-content-center"></div>
+</div>
+@*Mensaje*@
+@mensaje
 
 @code {
+	public List<Clientes> clientes = new List<Clientes>();
+	public bool loading { get; set; } = true;
+	public string filtro { get; set; }
+	public string mensaje { get; set; }
+	public string valorFiltro { get; set; }
 
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+
+		clientes = await httpClient.GetFromJsonAsync<List<Clientes>>("api/Clientes");
+
+		loading = false;
+
+		if (clientes.Count == 0)
+			StateHasChanged();
+	}
+
+	public async Task Buscar()
+	{
+		if (filtro == null)
+		{
+			mensaje = "Debe elegir un método parar filtrar";
+			StateHasChanged();
+			await Task.Delay(3000);
+			return;
+		}
+
+		switch(filtro)
+		{
+			case "id":
+				if(int.TryParse(valorFiltro, out int id))
+				{
+					var buscarId = clientes.Where(c => c.ClienteId == id).FirstOrDefault();
+					if (buscarId != null)
+					{
+						clientes.Clear();
+						clientes.Add(buscarId);
+						mensaje = "Cliente encontrado";
+					}
+					else
+					{
+						mensaje = "No se encontraron resultados";
+					}
+				}
+				else
+				{
+					mensaje = "No se encontraron resultados";
+				}
+				StateHasChanged();
+				break;
+
+			case "nombre":
+				var buscarNombre = clientes.Where(c => c.Nombre == valorFiltro).ToList();
+				if(buscarNombre.Any())
+				{
+					clientes = buscarNombre;
+					mensaje = "Cliente encontrado";
+				}
+				else
+				{
+					mensaje = "No se encontraron resultados";
+				}
+				StateHasChanged();
+				break;
+
+			case "rnc":
+				var buscarRNC = clientes.Where(c => c.RNC == valorFiltro).ToList();
+				if (buscarRNC.Any())
+				{
+					clientes = buscarRNC;
+					mensaje = "Cliente encontrado";
+				}
+				else
+				{
+					mensaje = "No se encontraron resultados";
+				}
+				StateHasChanged();
+				break;
+		}
+	}
+
+	public async Task Restablecer()
+	{
+		clientes = await httpClient.GetFromJsonAsync<List<Clientes>>("api/Clientes");
+		mensaje = "Lo datos fueron restablecidos";
+		StateHasChanged();
+	}
+
+	void IrACrear()
+	{
+		navigation.NavigateTo("/CreateClientes");
+	}
+
+	void IrADetalles(int id)
+	{
+		navigation.NavigateTo($"/ViewClientes/clienteId={id}");
+	}
+	void IrAEditar(int id)
+	{
+		navigation.NavigateTo($"/EditClientes/clienteId={id}");
+	}
+	void IrAEliminar(int id)
+	{
+		navigation.NavigateTo($"/DeleteClientes/clienteId={id}");
+	}
 }
