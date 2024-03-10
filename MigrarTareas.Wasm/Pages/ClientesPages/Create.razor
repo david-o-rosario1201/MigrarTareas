@@ -190,7 +190,7 @@
 			var response = await httpClient.PostAsJsonAsync("api/Clientes", cliente);
 			if (response.IsSuccessStatusCode)
 			{
-				mensaje = "El cliente se ha creado con exito";
+				mensaje = "El cliente se ha creado con éxito";
 				StateHasChanged();
 				await Task.Delay(2000);
 				Volver();
