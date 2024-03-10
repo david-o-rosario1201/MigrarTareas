@@ -1,5 +1,399 @@
-﻿<h3>Edit</h3>
+﻿@page "/EditClientes"
+@page "/EditClientes/clienteId={clienteId:int}"
+@inject NavigationManager navigation
+@inject HttpClient httpClient
+
+<PageTitle>Editar Cliente</PageTitle>
+<EditForm Model="cliente" OnValidSubmit="Modificar" FormName="formularioclientes">
+	<DataAnnotationsValidator />
+	<div class="container">
+		<div class="card shadow-lg">
+			@*Header*@
+			<div class="card-header">
+				<h3><strong>Editar Cliente</strong></h3>
+			</div>
+			@*Cuerpo*@
+			<div class="card-body">
+				<div class="row mb-3">
+					@*ClienteId*@
+					<div class="col-4">
+						<label class="form-label" for="clienteId"><strong>ClienteId:</strong></label>
+						<InputNumber id="clienteId" class="form-control" @bind-Value="cliente.ClienteId"></InputNumber>
+					</div>
+					@*Nombre*@
+					<div class="col-4">
+						<label class="form-label" for="entradaNombre"><strong>Nombre:</strong></label>
+						<InputText id="entradaNombre" class="form-control" placeholder="Escriba su nombre" @bind-Value="cliente.Nombre"></InputText>
+						<ValidationMessage For="@(() => cliente.Nombre)"></ValidationMessage>
+					</div>
+					@*Telefono*@
+					@* <div class="col-4">
+					<label class="form-label" for="telefono"><strong>Tel&eacute;fono:</strong></label>
+					<label class ="form-label"><em>(Nota: sin guiones)</em></label>
+					<InputText id="telefono" class="form-control" placeholder="Escriba su número de teléfono" @bind-Value="cliente.Telefono"></InputText>
+					<ValidationMessage For="@(() => cliente.Telefono)"></ValidationMessage>
+					</div> *@
+					@*RNC*@
+					<div class="col-4">
+						<label class="form-label" for="rnc"><strong>RNC:</strong></label>
+						<label class="form-label"><em>(Nota: sin guiones)</em></label>
+						<InputText id="rnc" class="form-control" placeholder="Escriba su número de RNC" @bind-Value="cliente.RNC"></InputText>
+						<ValidationMessage For="@(() => cliente.RNC)"></ValidationMessage>
+					</div>
+				</div>
+				<div class="row mb-3">
+					@*Celular*@
+					@* <div class="col-4">
+					<label class="form-label" for="celular"><strong>Celular:</strong></label>
+					<label class="form-label"><em>(Nota: sin guiones)</em></label>
+					<InputText id="celular" class="form-control" placeholder="Escriba su número de celular" @bind-Value="cliente.Celular"></InputText>
+					<ValidationMessage For="@(() => cliente.Celular)"></ValidationMessage>
+					</div> *@
+
+					@*Email*@
+					<div class="col-4">
+						<label class="form-label" for="email"><strong>Email:</strong></label>
+						<InputText id="email" class="form-control" placeholder="Escriba su dirección de email" @bind-Value="cliente.Email"></InputText>
+						<ValidationMessage For="@(() => cliente.Email)"></ValidationMessage>
+					</div>
+					@*Direccion*@
+					<div class="col-6">
+						<label class="form-label" for="direccion"><strong>Direcci&oacute;n:</strong></label>
+						<InputText id="direccion" class="form-control" placeholder="Escriba su dirección" @bind-Value="cliente.Direccion"></InputText>
+						<ValidationMessage For="@(() => cliente.Direccion)"></ValidationMessage>
+					</div>
+				</div>
+			</div>
+
+
+			@*Detalles*@
+			<div class="card card-header">
+				<h3><strong>Detalles</strong></h3>
+			</div>
+
+			@*Celulares*@
+			<div class="card-body">
+				<section class="row mb-3">
+					<div class="col-6">
+						<h4><strong>Registro de Celulares:</strong></h4>
+						<label class="form-label" for="celular"><strong>Celular:</strong></label>
+						<label><em>(Nota: Sin guiones)</em></label>
+						<div class="col-8">
+							<div class="input-group">
+								<InputText id="celular" class="form-control" @bind-Value="celular" placeholder="Ingrese un número de celular"></InputText>
+								<button type="button" class="btn btn-outline-success" @onclick="AgregarCelular"><i class="bi bi-plus-circle" /> Add</button>
+							</div>
+						</div>
+						@mensajeCelular
+					</div>
+
+					<div class="col-6">
+						@if (cliente.ClientesDetalleCelulares.Count > 0)
+						{
+							<table class="table table-bordered miTabla">
+								<thead>
+									<tr>
+										<th>Celular</th>
+										<th>Eliminar</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var celulares in cliente.ClientesDetalleCelulares)
+									{
+										<tr>
+											<td>@celulares.Celular</td>
+											<td><button type="button" class="btn btn-outline-danger" @onclick="()=>EliminarCelular(celulares)"><i class="bi bi-trash3-fill" /></button></td>
+										</tr>
+									}
+								</tbody>
+							</table>
+
+							<p><strong>Cantidad de Celulares: </strong>@cliente.ClientesDetalleCelulares.Count</p>
+						}
+					</div>
+				</section>
+			</div>
+
+
+
+			@*Telefonos*@
+			<div class="card-body">
+				<section class="row mb-3">
+					<div class="col-6">
+						<h4><strong>Registro de Tel&eacute;fonos:</strong></h4>
+						<label class="form-label" for="telefono"><strong>Tel&eacute;fono:</strong></label>
+						<label><em>(Nota: Sin guiones)</em></label>
+						<div class="col-8">
+							<div class="input-group">
+								<InputText id="telefono" class="form-control" @bind-Value="telefono" placeholder="Ingrese un número de teléfono"></InputText>
+								<button type="button" class="btn btn-outline-success" @onclick="AgregarTelefono"><i class="bi bi-plus-circle" /> Add</button>
+							</div>
+						</div>
+						@mensajeTelefono
+					</div>
+
+					<div class="col-6">
+						@if (cliente.ClientesDetalleTelefonos.Count > 0)
+						{
+							<table class="table table-bordered miTabla">
+								<thead>
+									<tr>
+										<th>Tel&eacute;fono</th>
+										<th>Eliminar</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var telefonos in cliente.ClientesDetalleTelefonos)
+									{
+										<tr>
+											<td>@telefonos.Telefono</td>
+											<td><button type="button" class="btn btn-outline-danger" @onclick="()=>EliminarTelfono(telefonos)"><i class="bi bi-trash3-fill" /></button></td>
+										</tr>
+									}
+								</tbody>
+							</table>
+
+							<p><strong>Cantidad de Tel&eacute;fonos: </strong>@cliente.ClientesDetalleTelefonos.Count</p>
+						}
+					</div>
+				</section>
+			</div>
+
+
+
+			<div class="card-footer d-flex justify-content-center">
+				@*Boton*@
+				<div class="px-2">
+					<button type="button" class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left" /> Volver</button>
+				</div>
+				<button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy-fill" /> Modificar</button>
+			</div>
+		</div>
+	</div>
+</EditForm>
+@*Mensaje*@
+@mensaje
 
 @code {
+	[Parameter]
+	public int clienteId { get; set; }
+	public Clientes cliente { get; set; } = new Clientes();
+	public string mensaje { get; set; } = string.Empty;
+	public string mensajeCelular { get; set; } = string.Empty;
+	public string mensajeTelefono { get; set; } = string.Empty;
+	public string celular { get; set; } = string.Empty;
+	public string telefono { get; set; } = string.Empty;
 
+
+	public string nombreLast { get; set; } = string.Empty;
+	public string rncLast { get; set; } = string.Empty;
+	public string emailLast { get; set; } = string.Empty;
+	public List<ClientesDetalleCelulares> listaTemporalCelulares = new List<ClientesDetalleCelulares>();
+	public List<ClientesDetalleTelefonos> listaTemporalTelefonos = new List<ClientesDetalleTelefonos>();
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+
+		cliente = await httpClient.GetFromJsonAsync<Clientes>($"api/Clientes/{clienteId}");
+
+		nombreLast = cliente.Nombre;
+		rncLast = cliente.RNC;
+		emailLast = cliente.Email;
+	}
+
+	public async Task Modificar()
+	{
+		if (!await Validar())
+			return;
+		else
+		{
+			if (listaTemporalCelulares.Count > 0 || listaTemporalTelefonos.Count > 0)
+				await BorrarDetalleDB();
+
+			var response = await httpClient.PutAsJsonAsync($"api/Clientes/{clienteId}",cliente);
+			if (response.IsSuccessStatusCode)
+			{
+				mensaje = "El cliente se ha modificado con éxito";
+				StateHasChanged();
+				await Task.Delay(2000);
+				Volver();
+			}
+			else
+				mensaje = "No se pudo modificar el cliente correctamente";
+		}
+
+	}
+
+	public async Task AgregarCelular()
+	{
+		if (!celular.All(char.IsDigit))
+		{
+			mensajeCelular = "El número no debe contener letras ni caracteres especiales";
+			StateHasChanged();
+			await LimpiarPantalla();
+			return;
+		}
+
+		if (celular.Length != 10)
+		{
+			mensajeCelular = "El número debe contener 10 dígitos";
+			StateHasChanged();
+			await LimpiarPantalla();
+			return;
+		}
+
+		if (!String.IsNullOrEmpty(celular))
+		{
+			if (await ValidarDetalle())
+			{
+				var nuevoDetalle = new ClientesDetalleCelulares { Celular = celular };
+				cliente.ClientesDetalleCelulares.Add(nuevoDetalle);
+				mensajeCelular = "Celular agregado";
+			}
+			else
+			{
+				mensajeCelular = "Ya existe un cliente con este número";
+				return;
+			}
+		}
+		else
+			mensajeCelular = "Debe ingresar un número de celular";
+
+		StateHasChanged();
+		await LimpiarPantalla();
+	}
+
+	public async Task AgregarTelefono()
+	{
+		if (!telefono.All(char.IsDigit))
+		{
+			mensajeTelefono = "El número no debe contener letras ni caracteres especiales";
+			StateHasChanged();
+			await LimpiarPantalla();
+			return;
+		}
+
+		if (telefono.Length != 10)
+		{
+			mensajeTelefono = "El número debe contener 10 dígitos";
+			StateHasChanged();
+			await LimpiarPantalla();
+			return;
+		}
+
+		if (!String.IsNullOrEmpty(telefono))
+		{
+			if (await ValidarDetalle())
+			{
+				var nuevoDetalle = new ClientesDetalleTelefonos { Telefono = telefono };
+				cliente.ClientesDetalleTelefonos.Add(nuevoDetalle);
+				mensajeTelefono = "Teléfono agregado";
+			}
+			else
+			{
+				mensajeTelefono = "Ya existe un cliente con este número";
+				return;
+			}
+		}
+		else
+			mensajeTelefono = "Debe ingresar un número de teléfono";
+
+		StateHasChanged();
+		await LimpiarPantalla();
+	}
+
+	public async Task<bool> Validar()
+	{
+		var clienteList = await httpClient.GetFromJsonAsync<List<Clientes>>("api/Clientes");
+		var nombre = clienteList.Where(c => c.Nombre == cliente.Nombre);
+		var rnc = clienteList.Where(c => c.RNC == cliente.RNC);
+		var email = clienteList.Where(c => c.Email == cliente.Email);
+
+		if (nombre.Any() && nombreLast != cliente.Nombre)
+		{
+			mensaje = "Error, ya existe un cliente con este nombre";
+			StateHasChanged();
+			return false;
+		}
+		if (rnc.Any() && rncLast != cliente.RNC)
+		{
+			mensaje = "Error, ya existe un cliente con este RNC";
+			StateHasChanged();
+			return false;
+		}
+		if (email.Any() && emailLast != cliente.Email)
+		{
+			mensaje = "Error, ya existe un cliente con este email";
+			StateHasChanged();
+			return false;
+		}
+
+		return true;
+	}
+
+	public async Task<bool> ValidarDetalle()
+	{
+		var clienteList = await httpClient.GetFromJsonAsync<List<Clientes>>("api/Clientes");
+
+		if (cliente.ClientesDetalleCelulares.Any(c => c.Celular == celular || c.Celular == telefono) ||
+		cliente.ClientesDetalleTelefonos.Any(c => c.Telefono == telefono || c.Telefono == celular))
+		{
+			return false;
+		}
+
+		if (clienteList.Any(c => c.ClientesDetalleCelulares.Any(c => c.Celular == celular || c.Celular == telefono)) ||
+		clienteList.Any(c => c.ClientesDetalleTelefonos.Any(c => c.Telefono == telefono || c.Telefono == celular)))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	public void EliminarCelular(ClientesDetalleCelulares detalle)
+	{
+		cliente.ClientesDetalleCelulares.Remove(detalle);
+
+		if (detalle.Id != 0)
+			listaTemporalCelulares.Add(detalle);
+	}
+
+	public void EliminarTelfono(ClientesDetalleTelefonos detalle)
+	{
+		cliente.ClientesDetalleTelefonos.Remove(detalle);
+
+		if (detalle.Id != 0)
+			listaTemporalTelefonos.Add(detalle);
+	}
+
+	public async Task BorrarDetalleDB()
+	{
+		foreach(var detalles in listaTemporalCelulares)
+		{
+			await httpClient.DeleteAsync($"api/Clientes/{clienteId}/DetalleCelulares/{detalles.Id}");
+		}
+
+		foreach (var detalles in listaTemporalTelefonos)
+		{
+			await httpClient.DeleteAsync($"api/Clientes/{clienteId}/DetalleTelefonos/{detalles.Id}");
+		}
+	}
+
+	public async Task LimpiarPantalla()
+	{
+		celular = string.Empty;
+		telefono = string.Empty;
+
+		await Task.Delay(2500);
+		mensaje = string.Empty;
+		mensajeCelular = string.Empty;
+		mensajeTelefono = string.Empty;
+	}
+
+	public void Volver()
+	{
+		navigation.NavigateTo("/Clientes");
+	}
 }
