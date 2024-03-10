@@ -54,14 +54,14 @@
     public int prioridadId { get; set; }
     public Prioridades prioridad { get; set; } = new Prioridades();
     public string mensaje { get; set; }
-    public string descripcion { get; set; } = string.Empty;
+    public string descripcionLast { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(500);
 
         prioridad = await httpClient.GetFromJsonAsync<Prioridades>($"api/Prioridades/{prioridadId}");
-        descripcion = prioridad.Descripcion;
+        descripcionLast = prioridad.Descripcion;
     }
 
     public async Task Modificar()
@@ -89,8 +89,9 @@
     public async Task<bool> Validar()
     {
         var prioridades = await httpClient.GetFromJsonAsync<List<Prioridades>>("api/Prioridades");
+        var descripcion = prioridades.Where(p => p.Descripcion == prioridad.Descripcion);
 
-        if (prioridades.Any() && prioridad.Descripcion != descripcion)
+        if (descripcion.Any() && prioridad.Descripcion != descripcionLast)
             return false;
 
         return true;
