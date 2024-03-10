@@ -1,5 +1,182 @@
-﻿<h3>Index</h3>
+﻿@page "/Sistemas"
+@inject NavigationManager navigation
+@inject HttpClient httpClient
+
+<PageTitle>Sistemas</PageTitle>
+<div class="container">
+	<did class="card shadow-lg">
+		@*Header*@
+		<div class="card-header">
+			<h3><strong>Sistemas</strong></h3>
+			<button type="button" class="btn btn-outline-primary" @onclick="IrACrear"><i class="bi bi-plus-circle" /> Crear</button>
+		</div>
+		@*Body*@
+		<div class="card-body">
+			@if (loading)
+			{
+				<div class="d-flex justify-content-center">
+					<div class="spinner-border text-info" role="status">
+						<span class="visually-hidden">Cargando...</span>
+					</div>
+				</div>
+			}
+			else if (sistemas.Count == 0)
+			{
+				<h1 class="miMensaje"><i class="bi bi-exclamation-triangle" /> No hay sistemas creados</h1>
+			}
+			else
+			{
+				@*Campos a Filtrar*@
+				<div class="mb-3">
+					<div class="row align-items-center">
+						<label class="form-label" for="filtro"><strong>Campo a Filtrar:</strong></label>
+						<div class="col-3">
+							<InputSelect id="filtro" class="form-select" @bind-Value="filtro">
+								<option>Elije una opci&oacute;n</option>
+								<option value="id">Id</option>
+								<option value="nombre">Nombre</option>
+							</InputSelect>
+						</div>
+						<div class="col-auto miFlecha">
+							<p>→</p>
+						</div>
+						<div class="col-4">
+							<div class="input-group">
+								<InputText class="form-control" @bind-Value="valorFiltro" placeholder="Ingrese un dato para filtrar"></InputText>
+								<button type="button" class="btn btn-outline-primary" @onclick="Buscar"><i class="bi bi-search" /></button>
+							</div>
+						</div>
+						<div class="col-3">
+							<button type="button" class="btn btn-outline-secondary" @onclick="Restablecer"><i class="bi bi-arrow-clockwise" /> Restablecer</button>
+						</div>
+					</div>
+				</div>
+
+				<table class="table table-bordered miTabla">
+					<thead>
+						<tr>
+							<th>SistemaId</th>
+							<th>Nombre</th>
+							<th>Ver</th>
+							<th>Editar</th>
+							<th>Eliminar</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var sistemas in sistemas)
+						{
+							<tr>
+								<td>@sistemas.SistemaId</td>
+								<td>@sistemas.Nombre</td>
+								<td><button type="button" class="btn btn-outline-info" @onclick="()=> IrADetalles(sistemas.SistemaId)"><i class="bi bi-eye" /></button></td>
+								<td><button type="button" class="btn btn-outline-warning" @onclick="()=> IrAEditar(sistemas.SistemaId)"><i class="bi bi-pencil-square" /></button></td>
+								<td><button type="button" class="btn btn-outline-danger" @onclick="()=> IrAEliminar(sistemas.SistemaId)"><i class="bi bi-trash3-fill" /></button></td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			}
+		</div>
+		@*Footer*@
+		<div class="card-footer">
+			<p><strong>Total de Sistemas:</strong> @sistemas.Count</p>
+		</div>
+	</did>
+</div>
+@mensaje
 
 @code {
+	public List<Sistemas> sistemas = new List<Sistemas>();
+	public bool loading { get; set; } = true;
+	public string filtro { get; set; }
+	public string valorFiltro { get; set; }
+	public string mensaje { get; set; }
 
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+
+		sistemas = await httpClient.GetFromJsonAsync<List<Sistemas>>("api/Sistemas");
+
+		loading = false;
+
+		if (sistemas.Count == 0)
+			StateHasChanged();
+	}
+
+	public async Task Buscar()
+	{
+		if (filtro == null)
+		{
+			mensaje = "Debe elegir un método parar filtrar";
+			StateHasChanged();
+			await Task.Delay(3000);
+			return;
+		}
+
+		switch (filtro)
+		{
+			case "id":
+				if (int.TryParse(valorFiltro, out int id))
+				{
+					var buscarId = sistemas.Where(s => s.SistemaId == id).FirstOrDefault();
+					if(buscarId != null)
+					{
+						sistemas.Clear();
+						sistemas.Add(buscarId);
+						mensaje = "Sistema encontrado";
+					}
+					else
+					{
+						mensaje = "No se encontraron resultados";
+					}
+				}
+				else
+				{
+					mensaje = "El valor ingresado para SistemaId no es válido";
+				}
+				StateHasChanged();
+				break;
+
+			case "nombre":
+				var buscarSistema = sistemas.Where(s => s.Nombre == valorFiltro).FirstOrDefault();
+				if(buscarSistema != null)
+				{
+					sistemas.Clear();
+					sistemas.Add(buscarSistema);
+					mensaje = "Sistema encontrado";
+				}
+				else
+				{
+					mensaje = "No se encontraron resultados";
+				}
+				StateHasChanged();
+				break;
+		}
+	}
+
+	public async Task Restablecer()
+	{
+		sistemas = await httpClient.GetFromJsonAsync<List<Sistemas>>("api/Sistemas");
+		mensaje = "Lo datos fueron restablecidos";
+		StateHasChanged();
+	}
+
+	void IrACrear()
+	{
+		navigation.NavigateTo("/CreateSistemas");
+	}
+
+	void IrADetalles(int id)
+	{
+		navigation.NavigateTo($"/DetailsSistemas/sistemaId={id}");
+	}
+	void IrAEditar(int id)
+	{
+		navigation.NavigateTo($"/EditSistemas/sistemaId={id}");
+	}
+	void IrAEliminar(int id)
+	{
+		navigation.NavigateTo($"/DeleteSistemas/sistemaId={id}");
+	}
 }
