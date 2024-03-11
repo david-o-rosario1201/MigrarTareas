@@ -1,5 +1,287 @@
-﻿<h3>Create</h3>
+﻿@page "/CreateTickets"
+@inject HttpClient httpClient
+@inject NavigationManager navigation
+
+<PageTitle>Crear Nuevo Ticket</PageTitle>
+<EditForm Model="ticket" OnValidSubmit="Crear">
+	<DataAnnotationsValidator />
+	<div class="container">
+		<div class="card shadow-lg">
+			@*Header*@
+			<div class="card-header">
+				<h3><strong>Crear Nuevo Ticket</strong></h3>
+			</div>
+			@*Cuerpo*@
+			<div class="card-body">
+				<div class="row mb-3">
+					<div class="col-4">
+						@*Ticket ID*@
+						<label class="form-label" for="ticketId"><strong>TicketId:</strong></label>
+						<InputNumber id="ticketId" class="form-control" @bind-Value="ticket.TicketId"></InputNumber>
+					</div>
+					<div class="col-4">
+						@*Fecha*@
+						<label class="form-label" for="fecha"><strong>Fecha:</strong></label>
+						<InputDate id="fecha" class="form-control" @bind-Value="ticket.Fecha"></InputDate>
+						<ValidationMessage For="@(() => ticket.Fecha)"></ValidationMessage>
+					</div>
+					<div class="col-4">
+						@*Asunto*@
+						<label class="form-label" for="asunto"><strong>Asunto:</strong></label>
+						<InputText id="asunto" class="form-control" @bind-Value="ticket.Asunto" placeholder="Ingrese un asunto"></InputText>
+						<ValidationMessage For="@(() => ticket.Asunto)"></ValidationMessage>
+					</div>
+				</div>
+
+				<div class="row mb-3">
+					<div class="col-4">
+						@*Solicitado Por*@
+						<label class="form-label" for="solicitado"><strong>SolicitadoPor:</strong></label>
+						<InputText id="solicitado" class="form-control" @bind-Value="ticket.SolicitadoPor" placeholder="Ingrese el nombre de quien solicita el ticket"></InputText>
+						<ValidationMessage For="@(() => ticket.SolicitadoPor)"></ValidationMessage>
+					</div>
+					<div class="col-4">
+						@*Cliente*@
+						<label class="form-label" for="clienteid"><strong>ClienteId:</strong></label>
+						<InputSelect id="cliente" class="form-select" @bind-Value="ticket.ClienteId">
+							<option>Elija una opci&oacute;n</option>
+							@foreach (var cliente in clientes)
+							{
+								<option value="@cliente.ClienteId">@cliente.Nombre</option>
+							}
+						</InputSelect>
+						<ValidationMessage For="@(() => ticket.ClienteId)"></ValidationMessage>
+					</div>
+					<div class="col-4">
+						@*Sistema*@
+						<label class="form-label" for="sistemaid"><strong>SistemaId:</strong></label>
+						<InputSelect id="sistemaid" class="form-select" @bind-Value="ticket.SistemaId">
+							<option>Elija una opci&oacute;n</option>
+							@foreach(var sistema in sistemas)
+							{
+								<option value="@sistema.SistemaId">@sistema.Nombre</option>
+							}
+						</InputSelect>
+						<ValidationMessage For="@(() => ticket.SistemaId)"></ValidationMessage>
+					</div>
+				</div>
+
+				<div class="row mb-3">
+					<div class="col-4">
+						@*Prioridad*@
+						<label class="form-label" for="prioridadid"><strong>PrioridadId:</strong></label>
+						<InputSelect id="prioridadid" class="form-select" @bind-Value="ticket.PrioridadId">
+							<option>Elija una opci&oacute;n</option>
+							@foreach(var prioridad in prioridades)
+							{
+								<option value="@prioridad.PrioridadId">@prioridad.Descripcion</option>
+							}
+						</InputSelect>
+						<ValidationMessage For="@(() => ticket.PrioridadId)"></ValidationMessage>
+					</div>
+					<div class="col-8">
+						@*Descripción*@
+						<label class="form-label" for="descripcion"><strong>Descripci&oacute;n:</strong></label>
+						<InputTextArea id="descripcion" class="form-control" @bind-Value="ticket.Descripcion" placeholder="Ingrese una descripción"></InputTextArea>
+						<ValidationMessage For="@(() => ticket.Descripcion)"></ValidationMessage>
+					</div>
+				</div>
+			</div>
+
+
+			@*TicketsDetalles*@
+			@*Header*@
+			<div class="card card-header">
+				<h3><strong>Detalles</strong></h3>
+			</div>
+			@*Body*@
+			<div class="card-body border border-1">
+				<div class="row align-content-center">
+					@*Emisor*@
+					<div class="col-4">
+						<label class="form-label" for="emisor"><strong>Emisor:</strong></label>
+						<InputText id="emisor" class="form-control" @bind-Value="transmitter" placeholder="Ingrese su nombre"></InputText>
+					</div>
+					@*Mensaje*@
+					<div class="col-4">
+						<label class="form-label" for="mensaje"><strong>Mensaje:</strong></label>
+						<InputTextArea id="mensaje" class="form-control" @bind-Value="message" placeholder="Ingrese un mensaje"></InputTextArea>
+					</div>
+					@*Boton*@
+					<div class="col-4 d-flex align-items-end">
+						<button type="button" class="btn btn-outline-success" @onclick="AgregarDetalle"><i class="bi bi-plus-circle" /> Agregar</button>
+					</div>
+				</div>
+			</div>
+
+
+			@if (ticket.TicketsDetalle.Count > 0)
+			{
+				@*Table Detalles*@
+				<table class="table table-bordered miTabla">
+					<thead>
+						<tr>
+							<th>Emisor</th>
+							<th>Mensaje</th>
+							<th>Eliminar</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var detalle in ticket.TicketsDetalle)
+						{
+							<tr>
+								<td>@detalle.Emisor</td>
+								<td>@detalle.Mensaje</td>
+								<td><button type="button" class="btn btn-outline-danger" @onclick="()=> EliminarDetalle(detalle)"><i class="bi bi-trash3-fill" /></button></td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			}
+
+			@*Footer*@
+			<div class="card-footer d-flex justify-content-center">
+				<div class="px-2">
+					<button type="button" class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left" /> Volver</button>
+				</div>
+				<button type="submit" class="btn btn-outline-success">
+					<i class="bi bi-floppy-fill" /> Crear
+				</button>
+			</div>
+		</div>
+	</div>
+</EditForm>
+@*Mensaje*@
+@mensaje
+@message
 
 @code {
+	public Tickets ticket { get; set; } = new Tickets();
+	public List<TicketsDetalle> detalles = new List<TicketsDetalle>();
+	public List<Clientes> clientes = new List<Clientes>();
+	public List<Sistemas> sistemas = new List<Sistemas>();
+	public List<Prioridades> prioridades = new List<Prioridades>();
+	public string mensaje { get; set; } = string.Empty;
+	public string transmitter { get; set; } = string.Empty;
+	public string message { get; set; } = string.Empty;
+	public string ultimo { get; set; } = string.Empty;
 
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+
+		clientes = await httpClient.GetFromJsonAsync<List<Clientes>>("api/Clientes");
+		sistemas = await httpClient.GetFromJsonAsync<List<Sistemas>>("api/Sistemas");
+		prioridades = await httpClient.GetFromJsonAsync<List<Prioridades>>("api/Prioridades");
+	}
+
+	public async Task Crear()
+	{
+		if (!await ValidarTicket())
+		{
+			return;
+		}
+		else
+		{
+			var response = await httpClient.PostAsJsonAsync("api/Tickets", ticket);
+			if (response.IsSuccessStatusCode)
+			{
+				mensaje = "Se guardo el ticket";
+				StateHasChanged();
+				await Task.Delay(2000);
+				Volver();
+			}
+			else
+			{
+				mensaje = "No se guardo el ticket";
+			}
+		}
+
+		LimpiarPantalla();
+	}
+
+	public async Task AgregarDetalle()
+	{
+		if (!string.IsNullOrEmpty(message) && !string.IsNullOrEmpty(transmitter))
+		{
+			if (!await ValidarDetalle())
+			{
+				return;
+			}
+			else
+			{
+				var nuevoDetalle = new TicketsDetalle { Emisor = transmitter, Mensaje = message };
+				ticket.TicketsDetalle.Add(nuevoDetalle);
+			}
+		}
+		else
+			mensaje = "No deben haber campos vacíos";
+
+		StateHasChanged();
+		await LimpiarPantalla();
+	}
+
+	public async Task<bool> ValidarTicket()
+	{
+		var tickets = await httpClient.GetFromJsonAsync<List<Tickets>>("api/Tickets");
+		var asunto = tickets.Where(t => t.Asunto.Equals(ticket.Asunto));
+		var solicitadoPor = tickets.Where(t => t.SolicitadoPor.Equals(ticket.SolicitadoPor));
+		var descripcion = tickets.Where(t => t.Descripcion.Equals(ticket.Descripcion));
+
+		if (asunto.Any())
+		{
+			mensaje = "Ya existe un ticket con este asunto";
+			return false;
+		}
+		if (solicitadoPor.Any())
+		{
+			mensaje = "Ya existe un ticket con este solicitado por";
+			return false;
+		}
+		if (descripcion.Any())
+		{
+			mensaje = "Ya existe un ticket con esta descripción";
+			return false;
+		}
+
+		return true;
+	}
+
+	public async Task<bool> ValidarDetalle()
+	{
+
+		foreach (var ticket in ticket.TicketsDetalle)
+		{
+			if (ticket.Mensaje == message)
+			{
+				mensaje = "Ya existe un detalle con este mensaje";
+				return false;
+			}
+			if (ticket.Emisor == transmitter)
+			{
+				mensaje = "Ya existe un detalle con este emisor";
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	public async Task EliminarDetalle(TicketsDetalle emisor)
+	{
+		ticket.TicketsDetalle.Remove(emisor);
+	}
+
+	public async Task LimpiarPantalla()
+	{
+		message = string.Empty;
+		transmitter = string.Empty;
+		await Task.Delay(2000);
+		mensaje = string.Empty;
+	}
+
+	void Volver()
+	{
+		navigation.NavigateTo("/Tickets");
+	}
 }
