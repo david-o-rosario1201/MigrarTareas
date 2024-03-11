@@ -18,15 +18,15 @@ public class Tickets
 	public DateTime Fecha { get; set; } = DateTime.Today;
 
 	[ForeignKey("Clientes")]
-	[Required(ErrorMessage = "Error, debe llenar este campo")]
+	[Range(1,int.MaxValue,ErrorMessage = "Error, ClienteId debe ser mayor a 0")]
 	public int ClienteId { get; set; }
 
 	[ForeignKey("Sistemas")]
-	[Required(ErrorMessage = "Error, debe llenar este campo")]
+	[Range(1, int.MaxValue, ErrorMessage = "Error, SistemaId debe ser mayor a 0")]
 	public int SistemaId { get; set; }
 
 	[ForeignKey("Prioridades")]
-	[Required(ErrorMessage = "Error, debe llenar este campo")]
+	[Range(1, int.MaxValue, ErrorMessage = "Error, PrioridadId debe ser mayor a 0")]
 	public int PrioridadId { get; set; }
 
 	[Required(ErrorMessage = "Error, debe llenar este campo")]
