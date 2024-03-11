@@ -1,5 +1,108 @@
-﻿<h3>Delete</h3>
+﻿@page "/DeleteTickets"
+@page "/DeleteTickets/ticketId={ticketId:int}"
+@* @rendermode InteractiveServer *@
+@inject HttpClient httpClient
+@inject NavigationManager navigation
+
+<PageTitle>Eliminar Ticket</PageTitle>
+<div class="container">
+	<div class="card shadow-lg">
+		@*Header*@
+		<div class="card-header">
+			<h3><strong>Eliminar Ticket</strong></h3>
+		</div>
+		@*Body*@
+		<div class="card-body">
+			@*Datos*@
+			<ul>
+				<li><p><strong>TicketId:</strong> @ticket.TicketId</p></li>
+				<li><p><strong>Fecha:</strong> @ticket.Fecha.ToShortDateString()</p></li>
+				<li><p><strong>Asunto:</strong> @ticket.Asunto</p></li>
+				<li><p><strong>SolicitadoPor:</strong> @ticket.SolicitadoPor</p></li>
+				<li><p><strong>ClienteId:</strong> @ticket.ClienteId</p></li>
+				<li><p><strong>SistemaId:</strong> @ticket.SistemaId</p></li>
+				<li><p><strong>PrioridadId:</strong> @ticket.PrioridadId</p></li>
+				<li><p><strong>Descripci&oacute;n:</strong> @ticket.Descripcion</p></li>
+
+			</ul>
+		</div>
+
+		@*TicketsDetalles*@
+		@*Header*@
+		<div class="card card-header">
+			<h3><strong>Detalles</strong></h3>
+		</div>
+
+		@*Detalles*@
+		<div class="card-body">
+			<section>
+				@if (ticket.TicketsDetalle.Count > 0)
+				{
+					@*Table Detalles*@
+					<table class="table table-bordered miTabla">
+						<thead>
+							<tr>
+								<th>Emisor</th>
+								<th>Mensaje</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var detalle in ticket.TicketsDetalle)
+							{
+								<tr>
+									<td>@detalle.Emisor</td>
+									<td>@detalle.Mensaje</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+					<p><strong>Total de Detalles: </strong>@ticket.TicketsDetalle.Count</p>
+				}
+			</section>
+		</div>
+
+		<div class="card-footer d-flex justify-content-center">
+			<div class="px-2">
+				<button type="button" class="btn btn-outline-dark" @onclick="Volver"><i class="bi bi-box-arrow-left" /> Cancelar</button>
+			</div>
+			<button type="button" class="btn btn-outline-danger" @onclick="Eliminar"><i class="bi bi-trash3-fill" /> Eliminar</button>
+		</div>
+	</div>
+</div>
+@*Mensaje*@
+@mensaje
 
 @code {
+	[Parameter]
+	public int ticketId { get; set; }
+	public Tickets ticket { get; set; } = new Tickets();
+	public string mensaje { get; set; } = string.Empty;
 
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+		ticket = await httpClient.GetFromJsonAsync<Tickets>($"api/Tickets/{ticketId}");
+	}
+
+	public async Task Eliminar()
+	{
+		var response = await httpClient.DeleteAsync($"api/Tickets/{ticket.TicketId}");
+
+		if (response.IsSuccessStatusCode)
+		{
+			mensaje = "El ticket se eliminó con éxito";
+			await Task.Delay(2000);
+			Volver();
+		}
+		else
+		{
+			mensaje = "El ticket no se pudo eliminar con éxito";
+		}
+	}
+
+
+	void Volver()
+	{
+		navigation.NavigateTo("/Tickets");
+	}
 }
