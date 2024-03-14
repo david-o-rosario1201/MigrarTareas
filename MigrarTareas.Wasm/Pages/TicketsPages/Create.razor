@@ -32,7 +32,6 @@
 						<ValidationMessage For="@(() => ticket.Asunto)"></ValidationMessage>
 					</div>
 				</div>
-
 				<div class="row mb-3">
 					<div class="col-4">
 						@*Solicitado Por*@
@@ -65,7 +64,6 @@
 						<ValidationMessage For="@(() => ticket.SistemaId)"></ValidationMessage>
 					</div>
 				</div>
-
 				<div class="row mb-3">
 					<div class="col-4">
 						@*Prioridad*@
@@ -86,64 +84,58 @@
 						<ValidationMessage For="@(() => ticket.Descripcion)"></ValidationMessage>
 					</div>
 				</div>
-			</div>
-
-
-			@*TicketsDetalles*@
-			@*Header*@
-			<div class="card card-header">
-				<h3><strong>Detalles</strong></h3>
-			</div>
-			@*Body*@
-			<div class="card-body">
-				<div class="row align-content-center">
-					@*Emisor*@
-					<div class="col-4">
-						<label class="form-label" for="emisor"><strong>Emisor:</strong></label>
-						<InputText id="emisor" class="form-control" @bind-Value="transmitter" placeholder="Ingrese su nombre"></InputText>
+				@*TicketsDetalles*@
+				<fieldset class="border-primmary border border-2">
+					@*Body*@
+					<div class="card-body">
+						<section class="row mb-4">
+							<h3><strong>Detalles</strong></h3>
+							<div class="row align-content-center">
+								@*Emisor*@
+								<div class="col-4">
+									<label class="form-label" for="emisor"><strong>Emisor:</strong></label>
+									<InputText id="emisor" class="form-control" @bind-Value="transmitter" placeholder="Ingrese su nombre"></InputText>
+								</div>
+								@*Mensaje*@
+								<div class="col-4">
+									<label class="form-label" for="mensaje"><strong>Mensaje:</strong></label>
+									<InputTextArea id="mensaje" class="form-control" @bind-Value="message" placeholder="Ingrese un mensaje"></InputTextArea>
+								</div>
+								@*Boton*@
+								<div class="col-4 d-flex align-items-end">
+									<button type="button" class="btn btn-outline-success" @onclick="AgregarDetalle"><i class="bi bi-plus-circle" /> Agregar</button>
+								</div>
+							</div>
+						</section>
+						<section>
+							@if (ticket.TicketsDetalle.Count > 0)
+							{
+								@*Table Detalles*@
+								<table class="table table-bordered miTabla">
+									<thead>
+										<tr>
+											<th>Emisor</th>
+											<th>Mensaje</th>
+											<th>Eliminar</th>
+										</tr>
+									</thead>
+									<tbody>
+										@foreach (var detalle in ticket.TicketsDetalle)
+										{
+											<tr>
+												<td>@detalle.Emisor</td>
+												<td>@detalle.Mensaje</td>
+												<td><button type="button" class="btn btn-outline-danger" @onclick="()=> EliminarDetalle(detalle)"><i class="bi bi-trash3-fill" /></button></td>
+											</tr>
+										}
+									</tbody>
+								</table>
+								<p><strong>Total de Detalles: </strong>@ticket.TicketsDetalle.Count</p>
+							}
+						</section>
 					</div>
-					@*Mensaje*@
-					<div class="col-4">
-						<label class="form-label" for="mensaje"><strong>Mensaje:</strong></label>
-						<InputTextArea id="mensaje" class="form-control" @bind-Value="message" placeholder="Ingrese un mensaje"></InputTextArea>
-					</div>
-					@*Boton*@
-					<div class="col-4 d-flex align-items-end">
-						<button type="button" class="btn btn-outline-success" @onclick="AgregarDetalle"><i class="bi bi-plus-circle" /> Agregar</button>
-					</div>
-				</div>
+				</fieldset>
 			</div>
-
-
-			<div class="card-body">
-				<section>
-					@if (ticket.TicketsDetalle.Count > 0)
-					{
-						@*Table Detalles*@
-						<table class="table table-bordered miTabla">
-							<thead>
-								<tr>
-									<th>Emisor</th>
-									<th>Mensaje</th>
-									<th>Eliminar</th>
-								</tr>
-							</thead>
-							<tbody>
-								@foreach (var detalle in ticket.TicketsDetalle)
-								{
-									<tr>
-										<td>@detalle.Emisor</td>
-										<td>@detalle.Mensaje</td>
-										<td><button type="button" class="btn btn-outline-danger" @onclick="()=> EliminarDetalle(detalle)"><i class="bi bi-trash3-fill" /></button></td>
-									</tr>
-								}
-							</tbody>
-						</table>
-						<p><strong>Total de Detalles: </strong>@ticket.TicketsDetalle.Count</p>
-					}
-				</section>
-			</div>
-
 			@*Footer*@
 			<div class="card-footer d-flex justify-content-center">
 				<div class="px-2">

@@ -20,67 +20,61 @@
 				<li><p><strong>Email:</strong> @cliente.Email</p></li>
 				<li><p><strong>Direcci&oacute;n:</strong> @cliente.Direccion</p></li>
 			</ul>
-		</div>
 
+			<fieldset class="border-primmary border border-2 mb-4">
+				@*Celulares*@
+				<div class="card-body">
+					<h3><strong>Detalles:</strong></h3>
+					<section class="row mb-3">
+						<div class="col-6">
+							@if (cliente.ClientesDetalleCelulares.Count > 0)
+							{
+								<table class="table table-bordered miTabla">
+									<thead>
+										<tr>
+											<th>Celular</th>
+										</tr>
+									</thead>
+									<tbody>
+										@foreach (var celulares in cliente.ClientesDetalleCelulares)
+										{
+											<tr>
+												<td>@celulares.Celular</td>
+											</tr>
+										}
+									</tbody>
+								</table>
 
-		@*Detalles*@
-		<div class="card card-header">
-			<h3><strong>Detalles</strong></h3>
-		</div>
+								<p><strong>Cantidad de Celulares: </strong>@cliente.ClientesDetalleCelulares.Count</p>
+							}
+						</div>
 
-		@*Celulares*@
-		<div class="card-body">
-			<section class="row mb-3">
-				<div class="col-6">
-					@if (cliente.ClientesDetalleCelulares.Count > 0)
-					{
-						<table class="table table-bordered miTabla">
-							<thead>
-								<tr>
-									<th>Celular</th>
-								</tr>
-							</thead>
-							<tbody>
-								@foreach (var celulares in cliente.ClientesDetalleCelulares)
-								{
-									<tr>
-										<td>@celulares.Celular</td>
-									</tr>
-								}
-							</tbody>
-						</table>
+						<div class="col-6">
+							@if (cliente.ClientesDetalleTelefonos.Count > 0)
+							{
+								<table class="table table-bordered miTabla">
+									<thead>
+										<tr>
+											<th>Tel&eacute;fono</th>
+										</tr>
+									</thead>
+									<tbody>
+										@foreach (var telefonos in cliente.ClientesDetalleTelefonos)
+										{
+											<tr>
+												<td>@telefonos.Telefono</td>
+											</tr>
+										}
+									</tbody>
+								</table>
 
-						<p><strong>Cantidad de Celulares: </strong>@cliente.ClientesDetalleCelulares.Count</p>
-					}
+								<p><strong>Cantidad de Tel&eacute;fonos: </strong>@cliente.ClientesDetalleTelefonos.Count</p>
+							}
+						</div>
+					</section>
 				</div>
-
-
-
-				<div class="col-6">
-					@if (cliente.ClientesDetalleTelefonos.Count > 0)
-					{
-						<table class="table table-bordered miTabla">
-							<thead>
-								<tr>
-									<th>Tel&eacute;fono</th>
-								</tr>
-							</thead>
-							<tbody>
-								@foreach (var telefonos in cliente.ClientesDetalleTelefonos)
-								{
-									<tr>
-										<td>@telefonos.Telefono</td>
-									</tr>
-								}
-							</tbody>
-						</table>
-
-						<p><strong>Cantidad de Tel&eacute;fonos: </strong>@cliente.ClientesDetalleTelefonos.Count</p>
-					}
-				</div>
-			</section>
+			</fieldset>
 		</div>
-
 
 		@*Footer*@
 		<div class="card-footer">
