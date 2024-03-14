@@ -63,104 +63,100 @@
 						<ValidationMessage For="@(() => cliente.Direccion)"></ValidationMessage>
 					</div>
 				</div>
-			</div>
 
+				@*Detalles*@
+				<fieldset class="border-primmary border border-2 mb-4">
+					@*Celulares*@
+					<div class="card-body">
+						<h3 class="row mb-3"><strong>Detalles:</strong></h3>
+						<h5 class="miLinea row mb-3"><strong>Registro de Celulares:</strong></h5>
+						<section class="row mb-3">
+							<div class="col-6">
 
-			@*Detalles*@
-			<div class="card card-header">
-				<h3><strong>Detalles</strong></h3>
-			</div>
-
-			@*Celulares*@
-			<div class="card-body">
-				<section class="row mb-3">
-					<div class="col-6">
-						<h4><strong>Registro de Celulares:</strong></h4>
-						<label class="form-label" for="celular"><strong>Celular:</strong></label>
-						<label><em>(Nota: Sin guiones)</em></label>
-						<div class="col-8">
-							<div class="input-group">
-								<InputText id="celular" class="form-control" @bind-Value="celular" placeholder="Ingrese un número de celular"></InputText>
-								<button type="button" class="btn btn-outline-success" @onclick="AgregarCelular"><i class="bi bi-plus-circle" /> Add</button>
+								<label class="form-label" for="celular"><strong>Celular:</strong></label>
+								<label><em>(Nota: Sin guiones)</em></label>
+								<div class="col-8">
+									<div class="input-group">
+										<InputText id="celular" class="form-control" @bind-Value="celular" placeholder="Ingrese un número de celular"></InputText>
+										<button type="button" class="btn btn-outline-success" @onclick="AgregarCelular"><i class="bi bi-plus-circle" /> Add</button>
+									</div>
+								</div>
+								@mensajeCelular
 							</div>
-						</div>
-						@mensajeCelular
-					</div>
 
-					<div class="col-6">
-						@if (cliente.ClientesDetalleCelulares.Count > 0)
-						{
-							<table class="table table-bordered miTabla">
-								<thead>
-									<tr>
-										<th>Celular</th>
-										<th>Eliminar</th>
-									</tr>
-								</thead>
-								<tbody>
-									@foreach (var celulares in cliente.ClientesDetalleCelulares)
-									{
-										<tr>
-											<td>@celulares.Celular</td>
-											<td><button type="button" class="btn btn-outline-danger" @onclick="()=>EliminarCelular(celulares)"><i class="bi bi-trash3-fill" /></button></td>
-										</tr>
-									}
-								</tbody>
-							</table>
+							@*Tabla Celulares*@
+							<div class="col-6">
+								@if (cliente.ClientesDetalleCelulares.Count > 0)
+								{
+									<table class="table table-bordered miTabla">
+										<thead>
+											<tr>
+												<th>Celular</th>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody>
+											@foreach (var celulares in cliente.ClientesDetalleCelulares)
+											{
+												<tr>
+													<td>@celulares.Celular</td>
+													<td><button type="button" class="btn btn-outline-danger" @onclick="()=>EliminarCelular(celulares)"><i class="bi bi-trash3-fill" /></button></td>
+												</tr>
+											}
+										</tbody>
+									</table>
 
-							<p><strong>Cantidad de Celulares: </strong>@cliente.ClientesDetalleCelulares.Count</p>
-						}
-					</div>
-				</section>
-			</div>
-
-
-
-			@*Telefonos*@
-			<div class="card-body">
-				<section class="row mb-3">
-					<div class="col-6">
-						<h4><strong>Registro de Tel&eacute;fonos:</strong></h4>
-						<label class="form-label" for="telefono"><strong>Tel&eacute;fono:</strong></label>
-						<label><em>(Nota: Sin guiones)</em></label>
-						<div class="col-8">
-							<div class="input-group">
-								<InputText id="telefono" class="form-control" @bind-Value="telefono" placeholder="Ingrese un número de teléfono"></InputText>
-								<button type="button" class="btn btn-outline-success" @onclick="AgregarTelefono"><i class="bi bi-plus-circle" /> Add</button>
+									<p><strong>Cantidad de Celulares: </strong>@cliente.ClientesDetalleCelulares.Count</p>
+								}
 							</div>
-						</div>
-						@mensajeTelefono
+						</section>
 					</div>
+					@*Telefonos*@
+					<div class="card-body">
+						<h5 class="row mb-3"><strong>Registro de Tel&eacute;fonos:</strong></h5>
+						<section class="row mb-3">
+							<div class="col-6">
 
-					<div class="col-6">
-						@if (cliente.ClientesDetalleTelefonos.Count > 0)
-						{
-							<table class="table table-bordered miTabla">
-								<thead>
-									<tr>
-										<th>Tel&eacute;fono</th>
-										<th>Eliminar</th>
-									</tr>
-								</thead>
-								<tbody>
-									@foreach (var telefonos in cliente.ClientesDetalleTelefonos)
-									{
-										<tr>
-											<td>@telefonos.Telefono</td>
-											<td><button type="button" class="btn btn-outline-danger" @onclick="()=>EliminarTelfono(telefonos)"><i class="bi bi-trash3-fill" /></button></td>
-										</tr>
-									}
-								</tbody>
-							</table>
+								<label class="form-label" for="telefono"><strong>Tel&eacute;fono:</strong></label>
+								<label><em>(Nota: Sin guiones)</em></label>
+								<div class="col-8">
+									<div class="input-group">
+										<InputText id="telefono" class="form-control" @bind-Value="telefono" placeholder="Ingrese un número de teléfono"></InputText>
+										<button type="button" class="btn btn-outline-success" @onclick="AgregarTelefono"><i class="bi bi-plus-circle" /> Add</button>
+									</div>
+								</div>
+								@mensajeTelefono
+							</div>
 
-							<p><strong>Cantidad de Tel&eacute;fonos: </strong>@cliente.ClientesDetalleTelefonos.Count</p>
-						}
+							@*Tabla Telefonos*@
+							<div class="col-6">
+								@if (cliente.ClientesDetalleTelefonos.Count > 0)
+								{
+									<table class="table table-bordered miTabla">
+										<thead>
+											<tr>
+												<th>Tel&eacute;fono</th>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody>
+											@foreach (var telefonos in cliente.ClientesDetalleTelefonos)
+											{
+												<tr>
+													<td>@telefonos.Telefono</td>
+													<td><button type="button" class="btn btn-outline-danger" @onclick="()=>EliminarTelfono(telefonos)"><i class="bi bi-trash3-fill" /></button></td>
+												</tr>
+											}
+										</tbody>
+									</table>
+
+									<p><strong>Cantidad de Tel&eacute;fonos: </strong>@cliente.ClientesDetalleTelefonos.Count</p>
+								}
+							</div>
+						</section>
 					</div>
-				</section>
+				</fieldset>
 			</div>
-
-
-
 			<div class="card-footer d-flex justify-content-center">
 				@*Boton*@
 				<div class="px-2">
