@@ -54,19 +54,6 @@ namespace MigrarTareas.Api.Controllers
             return clientes;
         }
 
-        // PUT: api/Clientes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutClientes(int id, Clientes clientes)
-        {
-            if(ClientesExists(clientes.ClienteId))
-			    _context.Clientes.Update(clientes);
-
-			await _context.SaveChangesAsync();
-
-			return Ok(clientes);
-		}
-
         // POST: api/Clientes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -82,8 +69,21 @@ namespace MigrarTareas.Api.Controllers
             return Ok(clientes);
         }
 
-        // DELETE: api/Clientes/5
-        [HttpDelete("{id}")]
+		// PUT: api/Clientes/5
+		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		[HttpPut("{id}")]
+		public async Task<IActionResult> PutClientes(int id, Clientes clientes)
+		{
+			if (ClientesExists(clientes.ClienteId))
+				_context.Clientes.Update(clientes);
+
+			await _context.SaveChangesAsync();
+
+			return Ok(clientes);
+		}
+
+		// DELETE: api/Clientes/5
+		[HttpDelete("{id}")]
         public async Task<IActionResult> DeleteClientes(int id)
         {
             var clientes = await _context.Clientes.FindAsync(id);

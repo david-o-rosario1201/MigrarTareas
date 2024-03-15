@@ -47,37 +47,6 @@ namespace MigrarTareas.Api.Controllers
             return sistemas;
         }
 
-        // PUT: api/Sistemas/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutSistemas(int id, Sistemas sistemas)
-        {
-            if (id != sistemas.SistemaId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(sistemas).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!SistemasExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Sistemas
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -93,8 +62,39 @@ namespace MigrarTareas.Api.Controllers
             return Ok(sistemas);
         }
 
-        // DELETE: api/Sistemas/5
-        [HttpDelete("{id}")]
+		// PUT: api/Sistemas/5
+		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		[HttpPut("{id}")]
+		public async Task<IActionResult> PutSistemas(int id, Sistemas sistemas)
+		{
+			if (id != sistemas.SistemaId)
+			{
+				return BadRequest();
+			}
+
+			_context.Entry(sistemas).State = EntityState.Modified;
+
+			try
+			{
+				await _context.SaveChangesAsync();
+			}
+			catch (DbUpdateConcurrencyException)
+			{
+				if (!SistemasExists(id))
+				{
+					return NotFound();
+				}
+				else
+				{
+					throw;
+				}
+			}
+
+			return NoContent();
+		}
+
+		// DELETE: api/Sistemas/5
+		[HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSistemas(int id)
         {
             var sistemas = await _context.Sistemas.FindAsync(id);

@@ -50,44 +50,6 @@ namespace MigrarTareas.Api.Controllers
             return tickets;
         }
 
-        // PUT: api/Tickets/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTickets(int id, Tickets tickets)
-        {
-            if(TicketsExists(id))
-                _context.Tickets.Update(tickets);
-
-            await _context.SaveChangesAsync();
-
-            return Ok(tickets);
-
-            //if (id != tickets.TicketId)
-            //{
-            //    return BadRequest();
-            //}
-
-            //_context.Entry(tickets).State = EntityState.Modified;
-
-            //try
-            //{
-            //    await _context.SaveChangesAsync();
-            //}
-            //catch (DbUpdateConcurrencyException)
-            //{
-            //    if (!TicketsExists(id))
-            //    {
-            //        return NotFound();
-            //    }
-            //    else
-            //    {
-            //        throw;
-            //    }
-            //}
-
-            //return NoContent();
-        }
-
         // POST: api/Tickets
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -103,8 +65,21 @@ namespace MigrarTareas.Api.Controllers
             return Ok(tickets);
         }
 
-        // DELETE: api/Tickets/5
-        [HttpDelete("{id}")]
+		// PUT: api/Tickets/5
+		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		[HttpPut("{id}")]
+		public async Task<IActionResult> PutTickets(int id, Tickets tickets)
+		{
+			if (TicketsExists(id))
+				_context.Tickets.Update(tickets);
+
+			await _context.SaveChangesAsync();
+
+			return Ok(tickets);
+		}
+
+		// DELETE: api/Tickets/5
+		[HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTickets(int id)
         {
             var tickets = await _context.Tickets.FindAsync(id);

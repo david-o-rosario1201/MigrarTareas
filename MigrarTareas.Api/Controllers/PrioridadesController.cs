@@ -49,37 +49,6 @@ namespace MigrarTareas.Api.Controllers
             return prioridades;
         }
 
-        // PUT: api/Prioridades/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPrioridades(int id, Prioridades prioridades)
-        {
-            if (id != prioridades.PrioridadId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(prioridades).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PrioridadesExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Prioridades
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -95,8 +64,39 @@ namespace MigrarTareas.Api.Controllers
             return Ok(prioridades);
         }
 
-        // DELETE: api/Prioridades/5
-        [HttpDelete("{id}")]
+		// PUT: api/Prioridades/5
+		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		[HttpPut("{id}")]
+		public async Task<IActionResult> PutPrioridades(int id, Prioridades prioridades)
+		{
+			if (id != prioridades.PrioridadId)
+			{
+				return BadRequest();
+			}
+
+			_context.Entry(prioridades).State = EntityState.Modified;
+
+			try
+			{
+				await _context.SaveChangesAsync();
+			}
+			catch (DbUpdateConcurrencyException)
+			{
+				if (!PrioridadesExists(id))
+				{
+					return NotFound();
+				}
+				else
+				{
+					throw;
+				}
+			}
+
+			return NoContent();
+		}
+
+		// DELETE: api/Prioridades/5
+		[HttpDelete("{id}")]
         public async Task<IActionResult> DeletePrioridades(int id)
         {
             var prioridades = await _context.Prioridades.FindAsync(id);
